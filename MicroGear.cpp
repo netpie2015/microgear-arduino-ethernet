@@ -45,18 +45,18 @@ bool MicroGear::getHTTPReply(Client *client, char *buff, size_t buffsize) {
 }
 
 void MicroGear::syncTime(Client *client, unsigned long *bts) {
-	char timestr[200];
-	char TMSTR[] = "GET /api/time HTTP/1.1\r\n\r\n";
+    char timestr[200];
+    strcpy_P(timestr,PSTR("GET /api/time HTTP/1.1\r\n\r\n"));
 
-	client->connect(GEARTIMEADDRESS,GEARTIMEPORT);
-	client->write((const uint8_t *)TMSTR,strlen(TMSTR));
+    client->connect(GEARTIMEADDRESS,GEARTIMEPORT);
+    client->write((const uint8_t *)timestr,strlen(timestr));
 
-	delay(1000);
-	getHTTPReply(client,timestr,250);
-	
-	*bts = atol(timestr) - millis()/1000;
+    delay(1000);
+    getHTTPReply(client,timestr,250);
+    
+    *bts = atol(timestr) - millis()/1000;
 
-	client->stop();
+    client->stop();
 }
 
 MicroGear::MicroGear(Client& netclient, void (* _callback)(char* topic, uint8_t*,unsigned int) ) {

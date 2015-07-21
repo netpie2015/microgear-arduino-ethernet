@@ -15,7 +15,7 @@
 #define APPID       "piedemo"
 #define GEARKEY     "qDDwMaHEXfBiXmL"
 #define GEARSECRET  "vNoswuhfqjxWSm0GR7cycGPniekw03"
-#define SCOPE       ""                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+#define SCOPE       ""
 
 EthernetClient client;
 AuthClient *authclient;
