@@ -28,8 +28,6 @@ class AuthClient {
         void writeln_P(const char[]);
         void write(char*);
         void writeln(char*);
-        void strcpy_P(char*,const char[]);
-        void strcat_P(char*,const char[]);
         bool readln(char*, size_t);
         int getGearToken(char, char*, char*, char*, char*, char*, char*, char*, char*);
     protected:
@@ -38,7 +36,7 @@ class AuthClient {
         char* appid;
         char* gearid;
         char* scope;
-        void writeout(char*, char*, bool, bool);
+        void writeout(char*, bool, bool);
         char* append(char*, char*, char);
         char* append_P(char*, char*, char);
         char* encode(char*,char);

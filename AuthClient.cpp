@@ -34,71 +34,49 @@ void AuthClient::stop() {
     client->stop();
 }
 /**
- * [AuthClient::writeout write string stored in sram or flash memory to client or memory buffer
- * @param dst     destination string address
- * @param src     source string
+ * [AuthClient::writeout write string to client
+ * @param str     text
  * @param newline append new line character?
  * @param progmem true:copy from prog memory, false:copy from sram
  */
-void AuthClient::writeout(char* dst, char* src, bool newline, bool progmem) {
+void AuthClient::writeout(char* str, bool newline, bool progmem) {
     unsigned char len;
-    char *dp;
     uint8_t ch, buff[MAXHEADERLINESIZE];
 
     if (!client) return;
     len = 0;
-    if (dst != NULL) dp = dst;
-    if (src) {
+    if (str) {
         if (progmem) {
-            while ((ch = pgm_read_byte(src++))) {
+            while ((ch = pgm_read_byte(str++))) {
                 buff[len++] = ch;
-                if (dst != NULL) {
-                    *dp = ch;
-                    dp++;
-                }
-            }
-            if (dst != NULL) {
-                *dp = '\0';
             }
         }    
         else {
-            len = strlen(src);
-            strcpy((char *)buff, src);
-            if (dst != NULL) strcpy(dst, src);
+            len = strlen(str);
+            strcpy((char *)buff, str);
         }
     }
     if (newline) {
         buff[len++] = '\r';
         buff[len++] = '\n';
     }
-    /* if dst == null then write to client */
-    if (dst == NULL)
-        client->write(buff,len);
+    client->write(buff,len);
 }
 
 void AuthClient::write_P(const char str[]) {
-  writeout(NULL, (char *)str, false, true);
+  writeout((char *)str, false, true);
 }
 
 void AuthClient::writeln_P(const char str[]) {
-  writeout(NULL, (char *)str, true, true);
+  writeout((char *)str, true, true);
 }
 
 void AuthClient::write(char* str) {
-  writeout(NULL, str, false, false);
+  writeout(str, false, false);
 }
 
 void AuthClient::writeln(char* str) {
-  writeout(NULL, str, true, false);
-}
-
-void AuthClient::strcpy_P(char *dst, const char src[]) {
-    writeout(dst, (char *)src, false, true);
-}
-
-void AuthClient::strcat_P(char *dst, const char src[]) {
-    unsigned char len = strlen(dst);
-    writeout(dst+len, (char *)src, false, true);
+  writeout(str, true, false);
 }
 
 bool AuthClient::readln(char *buffer, size_t buflen) {
@@ -370,6 +348,11 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
                 return 0;
             }
         }
+
+            Serial.println(token);
+            Serial.println(tokensecret);
+            Serial.println(endpoint);
+
         return httpstatus;
 }
 
