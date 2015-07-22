@@ -170,18 +170,15 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
         *tokensecret = '\0';
         *endpoint = '\0';
 
-        //strcpy(signbase,"POST&http%3A%2F%2F");
         strcpy_P(signbase,PSTR("POST&http%3A%2F%2F"));
        sprintf(strtail(signbase),"%s%%3A%d",GEARAUTHHOST,GEARAUTHPORT);
 
         if (mode == _REQUESTTOKEN) {
             writeln_P(PSTR("POST /oauth/request_token HTTP/1.1"));
-            //strcat(signbase,"%2Foauth%2Frequest_token&");
             strcat_P(signbase,PSTR("%2Foauth%2Frequest_token&"));
         }
         else {
             writeln_P(PSTR("POST /oauth/access_token HTTP/1.1"));
-            //strcat(signbase,"%2Foauth%2Faccess_token&");
             strcat_P(signbase,PSTR("%2Foauth%2Faccess_token&"));
         }
 
@@ -194,16 +191,13 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
 		/* this header is too long -- have to break into smaller chunks to write */
         *buff = '\0';
         append_P(buff,(char *)OAUTH_CALLBACK,0);
-		//strcat(buff,"\"appid%3D");
         strcat_P(buff,PSTR("\"appid%3D"));
 		strcat(buff,appid);
         write(buff);
 
 		*buff = '\0';
-		//strcat(buff,"%26scope%3D");
         strcat_P(buff,PSTR("%26scope%3D"));
 		strcat(buff,scope);
-		//strcat(buff,"%26verifier%3D");
         strcat_P(buff,PSTR("%26verifier%3D"));
 		strcat(buff,VERIFIER);
 		strcat(buff,"\",");
@@ -252,8 +246,7 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
         *buff = '\0';
         append_P(buff,(char *)OAUTH_TIMESTAMP,0);
 
-		//By pass NTP
-        //sprintf(strtail(buff),"\"%lu\"",(unsigned long)gettimestamp());
+		//Bypass NTP
 		sprintf(strtail(buff),"\"%lu\"",bootts+millis()/1000);
 
         strcat(signbase,"%26"); //&
@@ -348,11 +341,6 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
                 return 0;
             }
         }
-
-            Serial.println(token);
-            Serial.println(tokensecret);
-            Serial.println(endpoint);
-
         return httpstatus;
 }
 
