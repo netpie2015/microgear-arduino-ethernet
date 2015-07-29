@@ -8,14 +8,17 @@
 #ifndef MICROGEAR_H
 #define MICROGEAR_H
 
+#include <stdio.h>
 #include <Ethernet.h>
 #include "PubSubClient.h"
-
 #include "MQTTClient.h"
 #include <EEPROM.h>
 #include "SHA1.h"
 #include "AuthClient.h"
 
+#include "debug.h"
+
+   
 #define GEARTIMEADDRESS "gearauth.netpie.io"
 #define GEARTIMEPORT 8080
 
@@ -49,6 +52,13 @@
 #define CLIENT_CONNECTED           1
 #define CLIENT_REJECTED            2
 
+/* event type */
+#define MESSAGE                    1
+#define PRESENT                    2
+#define ABSENT                     3
+#define CALLBACK                   4
+
+
 class MicroGear {
 	private:
         char* appid;
@@ -64,6 +74,7 @@ class MicroGear {
         char* endpoint;
 		char mqtt_client_type;
 		unsigned long bootts;
+		int eepromoffset;
 
         int backoff, retry;
         AuthClient* authclient;
@@ -81,7 +92,7 @@ class MicroGear {
 
 	public:
 		int constate;
-		MicroGear(Client&, void (* callback)(char* topic, uint8_t*,unsigned int));
+		MicroGear(Client&);
 		void setName(char*);
 		boolean connect(char*);
 		boolean connected();
@@ -93,6 +104,9 @@ class MicroGear {
         void resetToken();
         void setToken(char*, char*);
         int init(char*, char*, char*);
+		void strcat(char*, char*);
+		void on(unsigned char,void (* callback)(char*, uint8_t*,unsigned int));
+		void setEEPROMOffset(int);
 };
 
 #endif

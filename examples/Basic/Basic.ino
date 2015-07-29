@@ -26,12 +26,31 @@ void msghandler(char *topic, uint8_t* msg, unsigned int msglen) {
 	Serial.println(topic);
 }
 
-MicroGear microgear(client, msghandler);
+void foundgear(char *attribute, uint8_t* msg, unsigned int msglen) {
+  Serial.print("Found new member --> ");
+  for (int i=0; i<msglen; i++)
+    Serial.print((char)msg[i]);
+  Serial.println();
+}
+
+void lostgear(char *attribute, uint8_t* msg, unsigned int msglen) {
+  Serial.print("lost member --> ");
+  for (int i=0; i<msglen; i++)
+    Serial.print((char)msg[i]);
+  Serial.println();
+  
+}
+
+MicroGear microgear(client);
 int timer = 0;
 
 void setup() {  
     Serial.begin(9600);
     Serial.println("Starting...");
+
+    microgear.on(MESSAGE,msghandler);
+    microgear.on(PRESENT,foundgear);
+    microgear.on(ABSENT,lostgear);
 
     if (Ethernet.begin(mac)) {
       Serial.println(Ethernet.localIP());
