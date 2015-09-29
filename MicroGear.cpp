@@ -228,8 +228,10 @@ void MicroGear::getToken(char* token, char* tokensecret, char *endpoint) {
                     delay(1000);
                 }
             }
-
-            Serial.println(authstatus);
+            #ifdef DEBUG_H
+                Serial.print("authstatus = ");
+                Serial.println(authstatus);
+            #endif
             if (authstatus == 200) {
 
                 *state = EEPROM_STATE_ACC;

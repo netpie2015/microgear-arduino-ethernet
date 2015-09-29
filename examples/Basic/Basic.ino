@@ -20,10 +20,11 @@ AuthClient *authclient;
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
 void msghandler(char *topic, uint8_t* msg, unsigned int msglen) {
-	Serial.print("Incoming message-->");
-	Serial.print(topic);
-	Serial.print(" : ");
-	Serial.println(topic);
+  Serial.print("Incoming message-->");
+  Serial.print(topic);
+  Serial.print(" : ");
+        msg[msglen] = '\0';
+  Serial.println((char *)msg);
 }
 
 void foundgear(char *attribute, uint8_t* msg, unsigned int msglen) {
@@ -62,22 +63,22 @@ void setup() {
 }
 
 void loop() {
-	if (microgear.connected()) {
-		Serial.println("connected");
-		microgear.loop();
-		if (timer >= 1000) {
-  			microgear.chat("mygear","Hello");
-	    	timer = 0;
-	    } 
-    	else timer += 100;
-	}
-	else {
-	    Serial.println("connection lost, reconnect...");
-    	if (timer >= 5000) {
- 			microgear.connect(APPID);
-			timer = 0;
-		}
-		else timer += 100;
-	}
-	delay(100);
+  if (microgear.connected()) {
+    Serial.println("connected");
+    microgear.loop();
+    if (timer >= 1000) {
+        microgear.chat("mygear","Hello");
+        timer = 0;
+      } 
+      else timer += 100;
+  }
+  else {
+      Serial.println("connection lost, reconnect...");
+      if (timer >= 5000) {
+      microgear.connect(APPID);
+      timer = 0;
+    }
+    else timer += 100;
+  }
+  delay(100);
 }

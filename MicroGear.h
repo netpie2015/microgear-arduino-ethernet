@@ -15,8 +15,7 @@
 #include <EEPROM.h>
 #include "SHA1.h"
 #include "AuthClient.h"
-
-#include "debug.h"
+//#include "debug.h"
 
    
 #define GEARTIMEADDRESS "gearauth.netpie.io"
