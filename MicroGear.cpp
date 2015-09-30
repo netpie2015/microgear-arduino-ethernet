@@ -134,15 +134,29 @@ void MicroGear::writeEEPROM(char* buff,int offset,int len) {
 
 void MicroGear::resetToken() {
     char state[2];
-    *state = EEPROM_STATE_NUL;
-    writeEEPROM(state,EEPROM_STATEOFFSET,1);
+
+    readEEPROM(state,EEPROM_STATEOFFSET,1);
+    if (state[0] == EEPROM_STATE_REQ || state[0] == EEPROM_STATE_ACC) {
+        char pstr[200];
+        char token[TOKENSIZE+1];
+        char revokecode[REVOKECODESIZE+1];
+
+        sockclient->connect(GEARAUTHHOST,GEARAUTHPORT);
+        readEEPROM(token,EEPROM_TOKENOFFSET,TOKENSIZE);
+        readEEPROM(revokecode,EEPROM_REVOKECODEOFFSET,REVOKECODESIZE);
+        sprintf(pstr,"GET /api/revoke/%s/%s HTTP/1.1\r\n\r\n",token,revokecode);
+        sockclient->write((const uint8_t *)pstr,strlen(pstr));
+        if (strcmp(pstr,"FAILED")!=0) {    
+            *state = EEPROM_STATE_NUL;
+            writeEEPROM(state,EEPROM_STATEOFFSET,1);
+        }
+    }
 }
 
 
 void MicroGear::getToken(char* token, char* tokensecret, char *endpoint) {
     char state[2];
     int authstatus = 0;
-
     char rtoken[TOKENSIZE+1];
     char rtokensecret[TOKENSECRETSIZE+1];
 
@@ -234,10 +248,22 @@ void MicroGear::getToken(char* token, char* tokensecret, char *endpoint) {
             #endif
             if (authstatus == 200) {
 
+                char buff[2*TOKENSECRETSIZE+2];
+                char revokecode[REVOKECODESIZE+1];
+
                 *state = EEPROM_STATE_ACC;
                 writeEEPROM(state,EEPROM_STATEOFFSET,1);
                 writeEEPROM(token,EEPROM_TOKENOFFSET,TOKENSIZE);
                 writeEEPROM(tokensecret,EEPROM_TOKENSECRETOFFSET,TOKENSECRETSIZE);
+
+                //Calculate revokecode
+                sprintf(buff,"%s&%s",tokensecret,gearsecret);
+                Sha1.initHmac((uint8_t*)buff,strlen(buff));
+                Sha1.HmacBase64(revokecode, token);
+            
+                for (int i=0;i<REVOKECODESIZE;i++)
+                    if (revokecode[i]=='/') revokecode[i] = '_';
+                writeEEPROM(revokecode,EEPROM_REVOKECODEOFFSET,REVOKECODESIZE);
 
                 char *p = endpoint+12;
                 while (*p != '\0') {
