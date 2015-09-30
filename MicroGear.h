@@ -18,7 +18,7 @@
 //#include "debug.h"
 
    
-#define GEARTIMEADDRESS "gearauth.netpie.io"
+#define GEARTIMEADDRESS "ga.netpie.io"
 #define GEARTIMEPORT 8080
 
 #define CLIENTTYPE "arduino.v1"
@@ -34,7 +34,7 @@
 #define USERNAMESIZE               65
 #define PASSWORDSIZE               28
 #define REVOKECODESIZE             28
-   
+
 #define EEPROM_STATE_NUL           65
 #define EEPROM_STATE_REQ           66
 #define EEPROM_STATE_ACC           67
@@ -57,7 +57,8 @@
 #define MESSAGE                    1
 #define PRESENT                    2
 #define ABSENT                     3
-#define CALLBACK                   4
+#define CONNECTED                  4
+#define CALLBACK                   5
 
 
 class MicroGear {
