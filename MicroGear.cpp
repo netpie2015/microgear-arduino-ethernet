@@ -22,7 +22,7 @@ void msgCallback(char* topic, uint8_t* payload, unsigned int length) {
             }
         }
         else if (strcmp(rtopic,"@absent") == 0) {
-            if (cb_present) {
+            if (cb_absent) {
                 cb_absent("absent",payload,length);
             }
         }
@@ -384,7 +384,8 @@ boolean MicroGear::connect(char* appid) {
                     sprintf(buff,"/&id/%s/#",token);
                     subscribe(buff);
 
-                    cb_connected(NULL,NULL,0);
+                    if (cb_connected)
+                        cb_connected(NULL,NULL,0);
 
                     break;
             case CLIENT_NOTCONNECT :
