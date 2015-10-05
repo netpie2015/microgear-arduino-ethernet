@@ -33,37 +33,43 @@ void msgCallback(char* topic, uint8_t* payload, unsigned int length) {
 }
 
 bool MicroGear::clientReadln(Client* client, char *buffer, size_t buflen) {
-        size_t pos = 0;
+ size_t pos = 0;
+    while (true) {
         while (true) {
-            while (true) {
-                uint8_t byte = client->read();
-                if (byte == '\n') {
-                    // EOL found.
-                    if (pos < buflen) {
-                        if (pos > 0 && buffer[pos - 1] == '\r')
-                        pos--;
-                        buffer[pos] = '\0';
-                    }
-                    else {
-                        buffer[buflen - 1] = '\0';
-                    }
-                    return true;
+            uint8_t byte = client->read();
+            if (byte == '\n') {
+                // EOF found.
+                if (pos < buflen) {
+                    if (pos > 0 && buffer[pos - 1] == '\r')
+                    pos--;
+                    buffer[pos] = '\0';
                 }
-                if (pos < buflen)
-                buffer[pos++] = byte;
+                else {
+                    buffer[buflen - 1] = '\0';
+                }
+                return true;
             }
+            if (byte != 255) {
+                if (pos < buflen) buffer[pos++] = byte;
+            }
+            else{
+                buffer[pos++] = '\0';
+                return true; 
+            } 
         }
-        return false;
+    }
+    return false;
 }
 
 bool MicroGear::getHTTPReply(Client *client, char *buff, size_t buffsize) {
     char pline = 0;
+    buff[0] = '\0';
     while (true) {
         clientReadln(client, buff, buffsize);
         if (pline > 0) {
             return true;
         }
-        if (strlen(buff)<6) pline++;
+        if (strlen(buff)<1) pline++;
     }
 }
 
@@ -94,6 +100,9 @@ MicroGear::MicroGear(Client& netclient ) {
 
     this->eepromoffset = 0;
     cb_message = NULL;
+    cb_connected = NULL;
+    cb_absent = NULL;
+    cb_present = NULL;
 }
 
 void MicroGear::on(unsigned char event, void (* callback)(char*, uint8_t*,unsigned int)) {
