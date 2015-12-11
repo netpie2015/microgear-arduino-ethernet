@@ -10,8 +10,9 @@
 #include <MicroGear.h>
 
 #define APPID       <APPID>
-#define GEARKEY     <APPKEY>
-#define GEARSECRET  <APPSECRET>
+#define KEY     <APPKEY>
+#define SECRET  <APPSECRET>
+#define ALIAS   "anything"
 #define SCOPE       ""
 
 EthernetClient client;
@@ -58,7 +59,7 @@ void setup() {
     if (Ethernet.begin(mac)) {
       Serial.println(Ethernet.localIP());
       microgear.resetToken();
-      microgear.init(GEARKEY,GEARSECRET,SCOPE);
+      microgear.init(KEY,SECRET,ALIAS);
       microgear.connect(APPID);
     }
 }

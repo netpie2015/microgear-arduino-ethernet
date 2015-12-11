@@ -7,7 +7,9 @@
 
 #define GEARAUTHHOST "ga.netpie.io"
 #define GEARAUTHPORT 8080
-#define VERIFIER "1234"
+
+#define MGREV "ADE1a"
+#define MAXVERIFIERSIZE         32
 #define TOKENSIZE               16
 #define TOKENSECRETSIZE         32
 #define MAXHEADERLINESIZE       350
@@ -30,7 +32,7 @@ class AuthClient {
         void write(char*);
         void writeln(char*);
         bool readln(char*, size_t);
-        int getGearToken(char, char*, char*, char*, char*, char*, char*, char*, char*);
+        int getGearToken(char, char*, char*, char*, char*, char*, char*, char *, char*, char*, char*);
     protected:
     private:
         Client* client;
@@ -44,6 +46,6 @@ class AuthClient {
         char* encode(char*,char*);
         char* strtail(char*);
         void addParam(char*, char*, char*, bool);
-		unsigned long bootts;
+        unsigned long bootts;
 };
-#endif // HTTPCLIENT_H
+#endif
