@@ -96,9 +96,10 @@ class MicroGear {
 		MicroGear(Client&);
 		void setName(char*);
 		void setAlias(char*);
-		boolean connect(char*);
-		boolean connected();
+		bool connect(char*);
+		bool connected();
 		void publish(char*, char*);
+		void publish(char*, char*, bool);
 		void subscribe(char*);
 		void unsubscribe(char*);
 		void chat(char*, char*);

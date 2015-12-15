@@ -341,7 +341,7 @@ void MicroGear::getToken(char *gkey, char *galias, char* token, char* tokensecre
     authclient->stop();
 }
 
-boolean MicroGear::connect(char* appid) {
+bool MicroGear::connect(char* appid) {
     char username[USERNAMESIZE+1];
     char password[PASSWORDSIZE+1];
     char buff[2*TOKENSECRETSIZE+2];
@@ -429,7 +429,7 @@ boolean MicroGear::connect(char* appid) {
     else return false;
 }
 
-boolean MicroGear::connected() {
+bool MicroGear::connected() {
     if (constate == CLIENT_NOTCONNECT) return CLIENT_NOTCONNECT;
     else return this->mqttclient->connected();
     //return this->sockclient->connected();
@@ -451,12 +451,17 @@ void MicroGear::unsubscribe(char* topic) {
     mqttclient->unsubscribe(top);
 }
 
+
 void MicroGear::publish(char* topic, char* message) {
+    publish(topic, message, false);
+}
+
+void MicroGear::publish(char* topic, char* message, bool retained) {
     char top[MAXTOPICSIZE] = "/";
 
     strcat(top,appid);
     strcat(top,topic);
-    mqttclient->publish(top, message);
+    mqttclient->publish(top, message, retained);
 }
 
 void MicroGear::setName(char* gearname) {
