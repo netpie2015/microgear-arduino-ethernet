@@ -15,7 +15,7 @@
 #include <EEPROM.h>
 #include "SHA1.h"
 #include "AuthClient.h"
-//#include "debug.h"
+#include "debug.h"
 
    
 #define GEARTIMEADDRESS "ga.netpie.io"
@@ -27,6 +27,7 @@
 #define MAXBACKOFFTIME             10000
 #define MAXENDPOINTLENGTH          200
 #define MAXTOPICSIZE               128
+#define STRBUFFERSIZE              200
 
 #define KEYSIZE                    16
 #define TOKENSIZE                  16
@@ -64,55 +65,56 @@
 
 
 class MicroGear {
-	private:
+    private:
         char* appid;
-		char* gearname;
-		char* gearkey;
+        char* gearname;
+        char* gearkey;
         char* gearsecret;
         char* gearalias;
         char* scope;
         char* token;
         char* tokensecret;
         char* endpoint;
-		unsigned long bootts;
-		int eepromoffset;
-
+        int eepromoffset;
         int backoff, retry;
+        unsigned long bootts;
+
+        MQTTClient *mqttclient;
+        Client *sockclient;
         AuthClient* authclient;
 
-		bool getHTTPReply(Client*, char*, size_t);
-		bool clientReadln(Client*, char*, size_t);
+        bool getHTTPReply(Client*, char*, size_t);
+        bool clientReadln(Client*, char*, size_t);
 
-		void syncTime(Client*, unsigned long*);
-		void readEEPROM(char*,int, int);
-		void writeEEPROM(char*,int, int);
+        void syncTime(Client*, unsigned long*);
+        void readEEPROM(char*,int, int);
+        void writeEEPROM(char*,int, int);
+        void initEndpoint(Client*, char*);
         void getToken(char*, char*, char*, char*, char*);
 
-		MQTTClient *mqttclient;
-		Client *sockclient;
-
-	public:
-		int constate;
-		MicroGear(Client&);
-		void setName(char*);
-		void setAlias(char*);
-		bool connect(char*);
-		bool connected();
-		void publish(char*, char*);
-		void publish(char*, char*, bool);
-		void subscribe(char*);
-		void unsubscribe(char*);
-		void chat(char*, char*);
-		void loop();
+    public:
+        int constate;
+        MicroGear(Client&);
+        void setName(char*);
+        void setAlias(char*);
+        bool connect(char*);
+        bool connected();
+        void publish(char*, char*);
+        void publish(char*, char*, bool);
+        void subscribe(char*);
+        void unsubscribe(char*);
+        void chat(char*, char*);
+        void loop();
         void resetToken();
         void setToken(char*, char*, char*);
         int init(char*, char*);
         int init(char*, char*, char*);
         int init(char*, char*, char*, char*);
-		void strcat(char*, char*);
-		void on(unsigned char,void (* callback)(char*, uint8_t*,unsigned int));
-		void setEEPROMOffset(int);
-		int state();
+        void resetEndpoint();
+        void strcat(char*, char*);
+        void on(unsigned char,void (* callback)(char*, uint8_t*,unsigned int));
+        void setEEPROMOffset(int);
+        int state();
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "Client.h"
 #include "SHA1.h"
-//#include "debug.h"
+#include "debug.h"
 
 #define GEARAUTHHOST "ga.netpie.io"
 #define GEARAUTHPORT 8080
@@ -32,6 +32,8 @@ class AuthClient {
         void write(char*);
         void writeln(char*);
         bool readln(char*, size_t);
+        void setToken(char *token, char* secret);
+        void setEndpoint(char *ep);
         int getGearToken(char, char*, char*, char*, char*, char*, char*, char *, char*, char*, char*);
     protected:
     private:
