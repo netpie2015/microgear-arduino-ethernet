@@ -1,19 +1,10 @@
-#include <AuthClient.h>
-#include <MicroGear.h>
-#include <MQTTClient.h>
-#include <PubSubClient.h>
-#include <SHA1.h>
-#include <Arduino.h>
-#include <SPI.h>
 #include <Ethernet.h>
-#include <EEPROM.h>
 #include <MicroGear.h>
 
-#define APPID       <APPID>
+#define APPID   <APPID>
 #define KEY     <APPKEY>
 #define SECRET  <APPSECRET>
 #define ALIAS   "anything"
-#define SCOPE       ""
 
 EthernetClient client;
 AuthClient *authclient;
@@ -44,7 +35,7 @@ void onLostgear(char *attribute, uint8_t* msg, unsigned int msglen) {
 
 void onConnected(char *attribute, uint8_t* msg, unsigned int msglen) {
   Serial.println("Connected to NETPIE...");
-  microgear.setName("mygear");
+  microgear.setAlias(ALIAS);
 }
 
 void setup() {  
@@ -58,7 +49,6 @@ void setup() {
 
     if (Ethernet.begin(mac)) {
       Serial.println(Ethernet.localIP());
-      microgear.resetToken();
       microgear.init(KEY,SECRET,ALIAS);
       microgear.connect(APPID);
     }
@@ -69,7 +59,7 @@ void loop() {
 		Serial.println("connected");
 		microgear.loop();
 		if (timer >= 1000) {
-  			microgear.chat("mygear","Hello");
+  			microgear.chat(ALIAS,"Hello");
 	    	timer = 0;
 	    } 
     	else timer += 100;

@@ -18,7 +18,7 @@ AuthClient::~AuthClient() {
 void AuthClient::init(char* appid, char* scope, unsigned long bts) {
     this->appid = appid;
     this->scope = scope;
-	this->bootts = bts;
+    this->bootts = bts;
 }
 
 bool AuthClient::connect() {
@@ -91,32 +91,40 @@ void AuthClient::writeln(char* str) {
 }
 
 bool AuthClient::readln(char *buffer, size_t buflen) {
-	size_t pos = 0;
-	while (true) {
-		while (true) {
-			uint8_t byte = client->read();
-			if (byte == '\n') {
-				// EOF found.
-				if (pos < buflen) {
-					if (pos > 0 && buffer[pos - 1] == '\r')
-					pos--;
-					buffer[pos] = '\0';
-				}
-				else {
-					buffer[buflen - 1] = '\0';
-				}
-				return true;
-			}
+    size_t pos = 0;
+    while (true) {
+        while (true) {
+            uint8_t byte = client->read();
+            if (byte == '\n') {
+                // EOF found.
+                if (pos < buflen) {
+                    if (pos > 0 && buffer[pos - 1] == '\r')
+                    pos--;
+                    buffer[pos] = '\0';
+                }
+                else {
+                    buffer[buflen - 1] = '\0';
+                }
+                return true;
+            }
             if (byte != 255) {
-    			if (pos < buflen) buffer[pos++] = byte;
+                if (pos < buflen) buffer[pos++] = byte;
             }
             else{
                 buffer[pos++] = '\0';
                 return true; 
             } 
-		}
-	}
-	return false;
+        }
+    }
+    return false;
+}
+
+void AuthClient::setToken(char *token, char* secret) {
+
+}
+
+void AuthClient::setEndpoint(char *ep) {
+    
 }
 
 bool processTok(char* key, char* buff, char **p) {
@@ -206,19 +214,19 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
         write_P(PSTR("Authorization: OAuth "));
 
         //OAUTH_CALLBACK
-		/* this header is too long -- have to break into smaller chunks to write */
+        /* this header is too long -- have to break into smaller chunks to write */
         *buff = '\0';
         append_P(buff,(char *)OAUTH_CALLBACK,0);
         strcat_P(buff,PSTR("\"appid%3D"));
-		strcat(buff,appid);
+        strcat(buff,appid);
 
         strcat(buff,"%26mgrev%3D");
         strcat(buff,MGREV);
         write(buff);
 
-		*buff = '\0';
+        *buff = '\0';
         strcat_P(buff,PSTR("%26scope%3D"));
-		strcat(buff,scope);
+        strcat(buff,scope);
 
         verifier[0] = '\0';
         // oauth verifier must longer tahn 2 characters
@@ -230,8 +238,8 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
         }
 
         strcat_P(buff,PSTR("%26verifier%3D"));
-		strcat(buff,verifier);
-		strcat(buff,"\",");
+        strcat(buff,verifier);
+        strcat(buff,"\",");
         write(buff);
 
         *buff = '\0';
@@ -283,8 +291,8 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
         *buff = '\0';
         append_P(buff,(char *)OAUTH_TIMESTAMP,0);
 
-		//Bypass NTP
-		sprintf(strtail(buff),"\"%lu\"",bootts+millis()/1000);
+        //Bypass NTP
+        sprintf(strtail(buff),"\"%lu\"",bootts+millis()/1000);
 
         strcat(signbase,"%26"); //&
         encode(strtail(signbase),buff);
@@ -340,7 +348,7 @@ int AuthClient::getGearToken(char mode, char* token, char* tokensecret, char* en
             Serial.println("Finish OAuth HTTP request..");
         #endif
 
-		delay(1000);
+        delay(1000);
 
         int httpstatus = 0;
         char pline = 0;
