@@ -113,8 +113,8 @@ void MicroGear::syncTime(Client *client, unsigned long *bts) {
     client->connect(GEARTIMEADDRESS,GEARTIMEPORT);
     client->write((const uint8_t *)timestr,strlen(timestr));
 
-    delay(1000);
-    getHTTPReply(client,timestr,250);
+    delay(250);
+    getHTTPReply(client,timestr,1000);
     
     *bts = atol(timestr) - millis()/1000;
 
