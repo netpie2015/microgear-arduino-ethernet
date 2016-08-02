@@ -494,16 +494,52 @@ void MicroGear::unsubscribe(char* topic) {
 }
 
 
-void MicroGear::publish(char* topic, char* message) {
-    publish(topic, message, false);
-}
-
-void MicroGear::publish(char* topic, char* message, bool retained) {
+bool MicroGear::publish(char* topic, char* message, bool retained) {
     char top[MAXTOPICSIZE] = "/";
 
     strcat(top,appid);
     strcat(top,topic);
-    mqttclient->publish(top, message, retained);
+    return mqttclient->publish(top, message, retained);
+}
+
+bool MicroGear::publish(char* topic, char* message) {
+    return publish(topic, message, false);
+}
+
+bool MicroGear::publish(char* topic, double message, int n) {
+    return publish(topic, message, n, false);
+}
+
+bool MicroGear::publish(char* topic, double message, int n, bool retained) {
+    char mstr[16];
+    dtostrf(message,0,n,mstr);
+    return publish(topic, mstr, retained);
+}
+
+bool MicroGear::publish(char* topic, double message) {
+    return publish(topic, message, 8, false);
+}
+
+bool MicroGear::publish(char* topic, double message, bool retained) {
+    return publish(topic, message, 8, retained);
+}
+
+bool MicroGear::publish(char* topic, int message) {
+    return publish(topic, message, 0, false);
+}
+
+bool MicroGear::publish(char* topic, int message, bool retained) {
+    return publish(topic, message, 0, retained);
+}
+
+bool MicroGear::publish(char* topic, String message) {
+    return publish(topic, message, false);
+}
+
+bool MicroGear::publish(char* topic, String message, bool retained) {
+    char buff[STRBUFFERSIZE];
+    message.toCharArray(buff,STRBUFFERSIZE);
+    return publish(topic, buff, retained);
 }
 
 void MicroGear::setName(char* gearname) {
@@ -528,10 +564,38 @@ void MicroGear::setAlias(char* gearalias) {
     publish(top,"");
 }
 
-void MicroGear::chat(char* targetgear, char* message) {
+bool MicroGear::chat(char* targetgear, char* message) {
+    bool result;
     char top[MAXTOPICSIZE];
+
     sprintf(top,"/%s/gearname/%s",appid,targetgear);
-    mqttclient->publish(top, message);
+    result = mqttclient->publish(top, message);
+    mqttclient->loop();
+    return result;
+}
+
+bool MicroGear::chat(char* topic, double message, int n) {
+    bool result;
+    char mstr[16];
+
+    dtostrf(message,0,n,mstr);
+    result = chat(topic, mstr);
+    mqttclient->loop();
+    return result;
+}
+
+bool MicroGear::chat(char* topic, double message) {
+    return chat(topic, message, 8);
+}
+
+bool MicroGear::chat(char* topic, int message) {
+    return chat(topic, message, 0);
+}
+
+bool MicroGear::chat(char* topic, String message) {
+    char buff[STRBUFFERSIZE];
+    message.toCharArray(buff,STRBUFFERSIZE);
+    return chat(topic, buff);
 }
 
 int MicroGear::init(char* gearkey,char* gearsecret) {
