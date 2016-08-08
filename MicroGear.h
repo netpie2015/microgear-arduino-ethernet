@@ -53,8 +53,12 @@
 #define MICROGEAR_REJECTED         2
 #define RETRY                      3
 
-#define CLIENT_NOTCONNECT          0
-#define CLIENT_CONNECTED           1
+#define MQTTCLIENT_NOTCONNECTED    0
+#define MQTTCLIENT_CONNECTED       1
+
+#define NETPIECLIENT_CONNECTED     0
+#define NETPIECLIENT_NOTCONNECTED  1
+#define NETPIECLIENT_TOKENERROR    2
 
 /* event type */
 #define MESSAGE                    1
@@ -90,14 +94,14 @@ class MicroGear {
         void readEEPROM(char*,int, int);
         void writeEEPROM(char*,int, int);
         void initEndpoint(Client*, char*);
-        void getToken(char*, char*, char*, char*, char*);
+        bool getToken(char*, char*, char*, char*, char*);
 
     public:
         int constate;
         MicroGear(Client&);
         void setName(char*);
         void setAlias(char*);
-        bool connect(char*);
+        int connect(char*);
         bool connected();
         bool publish(char*, char*);
         bool publish(char*, char*, bool);
