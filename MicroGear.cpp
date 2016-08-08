@@ -276,8 +276,7 @@ bool MicroGear::getToken(char *gkey, char *galias, char* token, char* tokensecre
                 #ifdef DEBUG_H
                     Serial.println("authclient is disconnected");
                 #endif
-                authclient->stop();
-                delay(2000);
+                return false;
             }    
         } while (!authstatus);
     }
