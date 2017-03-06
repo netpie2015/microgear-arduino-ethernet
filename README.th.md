@@ -113,7 +113,7 @@ microgear.init("sXfqDcXHzbFXiLk", "DNonzg2ivwS8ceksykGntrfQjxbL98", "myplant");
 
 **void MicroGear:: setEEPROMOffset(int *offset*)**
 
-ตั้งค่าตำแหน่งแรกของ EEPROM ที่จะให้ microgear เก็บบันทึก token คำสั่งนี้จะมีปรโยชน์ในกรณีที่ผู้ใช้ ต้องการใช้ EEPROM ในการเก็บบันทึกข้อมูลอย่างขึ้นด้วย ข้อมูลจะได้ไม่บันทึกทับซ้อนกัน โดยปกติหากไม่ได้เรียกคำสั่งนี้ microgear library จะใช้ EEPROM เริ่มต้นที่ตำแหน่งที่ 0 ในการเก็บ token
+ตั้งค่าตำแหน่งแรกของ EEPROM ที่จะให้ microgear เก็บบันทึก token คำสั่งนี้จะมีประโยชน์ในกรณีที่ผู้ใช้ ต้องการใช้ EEPROM ในการเก็บบันทึกข้อมูลอย่างขึ้นด้วย ข้อมูลจะได้ไม่บันทึกทับซ้อนกัน โดยปกติหากไม่ได้เรียกคำสั่งนี้ microgear library จะใช้ EEPROM เริ่มต้นที่ตำแหน่งที่ 0 ในการเก็บ token
 
 **arguments**
 * *offset* - ค่า offset ของตำแหน่ง EEPROM ที่ microgaer ใช้บันทึกข้อมูล ค่า default เป็น 0
