@@ -195,6 +195,24 @@ cancel subscription
 
 ---
 
+**void microgear.writeFeed (char* feedid, char *datajson)**<br/>
+**void microgear.writeFeed (char* feedid, char *datajson, char *apikey)**<br/>
+**void microgear.writeFeed (char* feedid, String datajson)**<br/>
+**void microgear.writeFeed (char* feedid, String datajson, char *apikey)**<br/>
+
+write time series data to a feed storage
+
+**arguments**
+* *feedid* - name of the feed 
+* *datajson* - data string in json format 
+* *apikey* - apikey for authorization. If apikey is not specified, you will need to allow the AppID to access feed and then the default apikey will be assigned automatically.
+
+```js
+microgear.writeFeed("homesensor","{temp:25.7,humid:62.8,light:8.5}");
+microgear.writeFeed("homesensor","temp:25.7,humid:62.8,light:8.5");
+```
+---
+
 **void MicroGear::resetToken()**
 
 To send a revoke token control message to NETPIE and delete the token from cache. As a result, the microgear will need to request a new token for the next connection.
