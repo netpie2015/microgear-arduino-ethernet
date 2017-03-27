@@ -7,6 +7,8 @@ void (* cb_message)(char*, uint8_t*,unsigned int);
 void (* cb_present)(char*, uint8_t*,unsigned int);
 void (* cb_absent)(char*, uint8_t*,unsigned int);
 void (* cb_connected)(char*, uint8_t*,unsigned int);
+void (* cb_error)(char*, uint8_t*,unsigned int);
+void (* cb_info)(char*, uint8_t*,unsigned int);
 
 void msgCallback(char* topic, uint8_t* payload, unsigned int length) {
     /* remove /appid/ */
@@ -30,7 +32,18 @@ void msgCallback(char* topic, uint8_t* payload, unsigned int length) {
            #endif
            if (mg) mg->resetEndpoint();
         }
-
+    }
+    else if (*topic == '@') {
+        if (strcmp(topic,"@error")==0) {
+            if (cb_error)  {
+                cb_error("error",payload,length);
+            }
+        }
+        else if (strcmp(topic,"@info")==0) {
+            if (cb_info)  {
+                cb_info("info",payload,length);
+            }
+        }
     }
     else if (cb_message) {
         cb_message(topic,payload,length);  
@@ -97,7 +110,7 @@ void MicroGear::initEndpoint(Client *client, char* endpoint) {
             Serial.println("resync endpoint..");
         #endif
 
-        char pstr[STRBUFFERSIZE];
+        char pstr[STRBUFFERSIZE+1];
         client->connect(GEARAUTHHOST,GEARAUTHPORT);
 
         sprintf(pstr,"GET /api/endpoint/%s HTTP/1.1\r\n\r\n",this->gearkey);
@@ -115,7 +128,7 @@ void MicroGear::initEndpoint(Client *client, char* endpoint) {
 }
 
 void MicroGear::syncTime(Client *client, unsigned long *bts) {
-    char timestr[STRBUFFERSIZE];
+    char timestr[STRBUFFERSIZE+1];
     strcpy(timestr,"GET /api/time HTTP/1.1\r\n\r\n");
 
     client->connect(GEARTIMEADDRESS,GEARTIMEPORT);
@@ -145,6 +158,8 @@ MicroGear::MicroGear(Client& netclient ) {
     cb_connected = NULL;
     cb_absent = NULL;
     cb_present = NULL;
+    cb_error = NULL;
+    cb_info = NULL;
 
     mg = (MicroGear *)this;
 }
@@ -166,6 +181,12 @@ void MicroGear::on(unsigned char event, void (* callback)(char*, uint8_t*,unsign
                 break;
         case CONNECTED :
                 if (callback) cb_connected = callback;
+                break;
+        case ERROR : 
+                if (callback) cb_error = callback;
+                break;
+        case INFO : 
+                if (callback) cb_info = callback;
                 break;
     }
 }
@@ -194,7 +215,7 @@ void MicroGear::resetToken() {
 
     readEEPROM(state,EEPROM_STATEOFFSET,1);
     if (state[0] == EEPROM_STATE_ACC) {
-        char pstr[STRBUFFERSIZE];
+        char pstr[STRBUFFERSIZE+1];
         char token[TOKENSIZE+1];
         char revokecode[REVOKECODESIZE+1];
 
@@ -489,7 +510,7 @@ bool MicroGear::connected() {
 }
 
 void MicroGear::subscribe(char* topic) {
-    char top[MAXTOPICSIZE] = "/";
+    char top[MAXTOPICSIZE+1] = "/";
 
     strcat(top,appid);
     strcat(top,topic);
@@ -497,7 +518,7 @@ void MicroGear::subscribe(char* topic) {
 }
 
 void MicroGear::unsubscribe(char* topic) {
-    char top[MAXTOPICSIZE] = "/";
+    char top[MAXTOPICSIZE+1] = "/";
 
     strcat(top,appid);
     strcat(top,topic);
@@ -506,7 +527,7 @@ void MicroGear::unsubscribe(char* topic) {
 
 
 bool MicroGear::publish(char* topic, char* message, bool retained) {
-    char top[MAXTOPICSIZE] = "/";
+    char top[MAXTOPICSIZE+1] = "/";
 
     strcat(top,appid);
     strcat(top,topic);
@@ -548,13 +569,42 @@ bool MicroGear::publish(char* topic, String message) {
 }
 
 bool MicroGear::publish(char* topic, String message, bool retained) {
-    char buff[STRBUFFERSIZE];
+    char buff[STRBUFFERSIZE+1];
     message.toCharArray(buff,STRBUFFERSIZE);
     return publish(topic, buff, retained);
 }
 
+bool MicroGear::writeFeed(char* feedname, char *data, char* apikey) {
+    char buff[MAXTOPICSIZE+1] = "/@writefeed/";
+    
+    strcat(buff,feedname);
+    if(apikey!=NULL && strlen(apikey)>0){
+        strcat(buff,"/");
+        strcat(buff,apikey);
+    }
+    return publish(buff, data);
+}
+
+bool MicroGear::writeFeed(char* feedname, char *data) {
+    return writeFeed(feedname, data, NULL);
+}
+
+bool MicroGear::writeFeed(char* feedname, String data, char* apikey) {
+    char buff[STRBUFFERSIZE+1];
+    data.toCharArray(buff,STRBUFFERSIZE);
+    
+    return writeFeed(feedname, buff, apikey);
+}
+
+bool MicroGear::writeFeed(char* feedname, String data) {
+    return writeFeed(feedname, data, NULL);
+}
+
+/*
+  setName() is deprecated 
+*/
 void MicroGear::setName(char* gearname) {
-    char top[MAXTOPICSIZE];
+    char top[MAXTOPICSIZE+1];
     if (this->gearname) {
         strcpy(top,"/gearname/");
         strcat(top,this->gearname);
@@ -568,7 +618,7 @@ void MicroGear::setName(char* gearname) {
 }
 
 void MicroGear::setAlias(char* gearalias) {
-    char top[MAXTOPICSIZE];
+    char top[MAXTOPICSIZE+1];
     strcpy(top,"/@setalias/");
     strcat(top,gearalias);
     this->gearalias = gearalias;
@@ -577,7 +627,7 @@ void MicroGear::setAlias(char* gearalias) {
 
 bool MicroGear::chat(char* targetgear, char* message) {
     bool result;
-    char top[MAXTOPICSIZE];
+    char top[MAXTOPICSIZE+1];
 
     sprintf(top,"/%s/gearname/%s",appid,targetgear);
     result = mqttclient->publish(top, message);
@@ -604,7 +654,7 @@ bool MicroGear::chat(char* topic, int message) {
 }
 
 bool MicroGear::chat(char* topic, String message) {
-    char buff[STRBUFFERSIZE];
+    char buff[STRBUFFERSIZE+1];
     message.toCharArray(buff,STRBUFFERSIZE);
     return chat(topic, buff);
 }
