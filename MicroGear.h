@@ -113,6 +113,10 @@ class MicroGear {
         bool publish(char*, int, bool);
         bool publish(char*, String);
         bool publish(char*, String, bool);
+        bool writeFeed(char*, char*);
+        bool writeFeed(char*, char*, char*);
+        bool writeFeed(char*, String);
+        bool writeFeed(char*, String, char*);
         bool chat(char*, char*);
         bool chat(char*, int);
         bool chat(char*, double);

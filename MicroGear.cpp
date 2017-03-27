@@ -553,6 +553,35 @@ bool MicroGear::publish(char* topic, String message, bool retained) {
     return publish(topic, buff, retained);
 }
 
+bool MicroGear::writeFeed(char* feedname, char *data, char* apikey) {
+    char buff[MAXBUFFSIZE] = "/@writefeed/";
+    
+    strcat(buff,feedname);
+    if(apikey!=NULL && strlen(apikey)>0){
+        strcat(buff,"/");
+        strcat(buff,apikey);
+    }
+    return publish(buff, data);
+}
+
+bool MicroGear::writeFeed(char* feedname, char *data) {
+    return writeFeed(feedname, data, NULL);
+}
+
+bool MicroGear::writeFeed(char* feedname, String data, char* apikey) {
+    char buff[MAXBUFFSIZE];
+    data.toCharArray(buff,MAXBUFFSIZE-1);
+    
+    return writeFeed(feedname, buff, apikey);
+}
+
+bool MicroGear::writeFeed(char* feedname, String data) {
+    return writeFeed(feedname, data, NULL);
+}
+
+/*
+  setName() is deprecated 
+*/
 void MicroGear::setName(char* gearname) {
     char top[MAXTOPICSIZE];
     if (this->gearname) {
