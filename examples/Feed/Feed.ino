@@ -1,12 +1,19 @@
+/*  A simple feed sample codes                                                    */
+/*  You will need the following:                                                  */
+/*    1. Subscribe to NETPIE.io.                                                  */
+/*.   2. Create an APPID, KEY and SECRET and replace their values in the code.    */
+/*    3. Create Feed and replace <FEEDID> and <FEEDAPIKEY> with the real values.  */ 
+/*.   4. Create a feed attribute 'value' of type number.                          */
+
 #include <Ethernet.h>
 #include <MicroGear.h>
 
 #define APPID   <APPID>
-#define KEY     <APPKEY>
-#define SECRET  <APPSECRET>
+#define KEY     <KEY>
+#define SECRET  <SECRET>
 #define ALIAS   "feedsender"
 
-#define FEEDID  <FEEDID>
+#define FEEDID      <FEEDID>
 #define FEEDAPIKEY  <FEEDAPIKEY>
 
 EthernetClient client;
