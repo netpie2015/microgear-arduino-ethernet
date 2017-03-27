@@ -66,7 +66,8 @@
 #define ABSENT                     3
 #define CONNECTED                  4
 #define CALLBACK                   5
-
+#define ERROR                      6
+#define INFO                       7
 
 class MicroGear {
     private:
