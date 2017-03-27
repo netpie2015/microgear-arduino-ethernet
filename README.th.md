@@ -204,6 +204,23 @@ microgear อาจจะมีความสนใจใน topic ใดเป
 
 ---
 
+**void microgear.writeFeed (char* feedid, char *datajson)**<br/>
+**void microgear.writeFeed (char* feedid, char *datajson, char *apikey)**<br/>
+**void microgear.writeFeed (char* feedid, String datajson)**<br/>
+**void microgear.writeFeed (char* feedid, String datajson, char *apikey)**<br/>
+เขียนข้อมูลลง feed storage
+
+**arguments**
+* *feedid* - ชื่อของ feed ที่ต้องการจะเขียนข้อมูล 
+* *datajson* - ข้อมูลที่จะบันทึก ในรูปแบบ json 
+* *apikey* - apikey สำหรับตรวจสอบสิทธิ์ หากไม่กำหนด จะใช้ default apikey ของ feed ที่ให้สิทธิ์ไว้กับ AppID
+
+```js
+microgear.writeFeed("homesensor","{temp:25.7,humid:62.8,light:8.5}");
+microgear.writeFeed("homesensor","temp:25.7,humid:62.8,light:8.5");
+```
+---
+
 **void MicroGear::resetToken()**
 
 ส่งคำสั่ง revoke token ไปยัง netpie และลบ token ออกจาก cache ส่งผลให้ microgear ต้องขอ token ใหม่ในการเชื่อมต่อครั้งต่อไป
